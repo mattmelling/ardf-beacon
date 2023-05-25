@@ -6,14 +6,14 @@ const char message[] = "2E0YML";
 // Pin we will key on
 #define PIN_CW 3
 #define PIN_PTT 4
-#define PTT_DELAY 100
+#define PTT_DELAY 500
 
 #define BEACON_DELAY (1000 * 3) // How long to wait between beacons
 
 #define keyOn()  analogWrite(PIN_CW, 127);
 #define keyOff() analogWrite(PIN_CW, 0);
 
-#define pttOn()  digitalWrite(PIN_PTT, 0); delay(PTT_DELAY);
+#define pttOn()  digitalWrite(PIN_PTT, 1); delay(PTT_DELAY);
 #define pttOff() delay(PTT_DELAY); digitalWrite(PIN_PTT, 0);
 
 void dit() {
