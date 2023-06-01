@@ -1,20 +1,24 @@
 #include <Arduino.h>
 #include "morse.h"
 
-const char message[] = "2E0YML";
+const char message[] = " M1CYT D ";
 
 // Pin we will key on
 #define PIN_CW 3
 #define PIN_PTT 4
 #define PTT_DELAY 500
 
-#define BEACON_DELAY (1000 * 3) // How long to wait between beacons
+const long BEACON_DELAY = 3L * 60L * 1000L;
 
 #define keyOn()  analogWrite(PIN_CW, 127);
 #define keyOff() analogWrite(PIN_CW, 0);
 
 #define pttOn()  digitalWrite(PIN_PTT, 1); delay(PTT_DELAY);
 #define pttOff() delay(PTT_DELAY); digitalWrite(PIN_PTT, 0);
+
+#define DEBUG
+
+unsigned long ts = 0;
 
 void dit() {
   keyOn();
@@ -28,18 +32,6 @@ void dah() {
   delayDah();
   keyOff();
   delayGap();
-}
-
-void setup() {
-  pinMode(PIN_CW, OUTPUT);
-  pinMode(PIN_PTT, OUTPUT);
-
-  pttOff();
-  keyOff();
-
-  // Set PWM speed
-  TCCR2B = 0b00000100;
-  TCCR2A = 0b00000011;
 }
 
 void send(char c) {
@@ -65,8 +57,12 @@ void send(char c) {
   }
 }
 
-void loop() {
-
+void beacon() {
+  #ifdef DEBUG
+  Serial.print("Sending \"");
+  Serial.print(message);
+  Serial.println("\"");
+  #endif
   pttOn();
 
   int len = strlen(message);
@@ -77,6 +73,40 @@ void loop() {
   }
 
   pttOff();
+}
 
-  delay(BEACON_DELAY);
+void setup() {
+  pinMode(PIN_CW, OUTPUT);
+  pinMode(PIN_PTT, OUTPUT);
+
+  pttOff();
+  keyOff();
+
+  // Set PWM speed
+  TCCR2B = 0b00000100;
+  TCCR2A = 0b00000011;
+
+  Serial.begin(115200);
+  beacon();
+}
+
+void loop() {
+
+  if((millis() - ts) < BEACON_DELAY) {
+    #ifdef DEBUG
+    delay(1000);
+    Serial.print(millis());
+    Serial.print(" - ");
+    Serial.print(ts);
+    Serial.print(" = ");
+    Serial.print(millis() - ts);
+    Serial.print(" (");
+    Serial.print(BEACON_DELAY);
+    Serial.println(")");
+    #endif
+    return;
+  }
+
+  beacon();
+  ts = millis();
 }

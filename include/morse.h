@@ -8,11 +8,7 @@
 // Timing constants
 // https://morsecode.world/international/timing.html
 /* #define TDIT ((int)((60 / (50 * WPM)) * 1000)) // Time for a dit */
-#define TDIT 60
-#define TDAH (3 * TDIT)                        // Time for a dah
-#define TGAP TDIT                              // Time for a gap between dits and dahs
-#define TCHR 3 * TDIT                          // Time for space between characters
-#define TSPC 7 * TDIT                          // Time for gap between words
+#define TDIT 100
 
 #define DIT '.'
 #define DAH '-'
